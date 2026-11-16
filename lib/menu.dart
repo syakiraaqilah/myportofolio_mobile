@@ -1,116 +1,152 @@
 import 'package:flutter/material.dart';
+import 'theme.dart';
+
+// Helper untuk ItemCard dan logout
+void showInfoSnack(BuildContext context, String message) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(message)));
+}
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   final String npm = "2506541622";
-  final String nama = "Syakira Aqilah Amru";
+  final String nama = "Syakira";
   final String kelas = "PBP B";
 
-  final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Proyek", Icons.folder),
-    ItemHomepage("Tambah Proyek", Icons.add_circle),
-    ItemHomepage("Logout", Icons.logout),
+  final List<ItemHomepage> viewItems = const [
+    ItemHomepage(name: "View Projects", icon: Icons.folder_rounded,
+        bgColor: AppColors.mint, iconColor: AppColors.mintIcon),
+    ItemHomepage(name: "View Education", icon: Icons.school_rounded,
+        bgColor: AppColors.peach, iconColor: AppColors.peachIcon),
+    ItemHomepage(name: "View Skills", icon: Icons.build,
+        bgColor: AppColors.lilac, iconColor: AppColors.lilacIcon),
   ];
+
+  final List<ItemHomepage> addItems = const [
+    ItemHomepage(name: "Add Projects", icon: Icons.add_circle_rounded,
+        bgColor: AppColors.coral, iconColor: AppColors.coralIcon),
+    ItemHomepage(name: "Add Education", icon: Icons.add_circle_rounded,
+        bgColor: AppColors.sky, iconColor: AppColors.skyIcon),
+  ];
+
+  // Helper: membangun grid dari sebuah list
+  Widget _buildGrid(List<ItemHomepage> items,
+      {required int columns, required double ratio}) {
+    return GridView.count(
+      crossAxisCount: columns,
+      childAspectRatio: ratio,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      shrinkWrap: true,                              
+      physics: const NeverScrollableScrollPhysics(), 
+      children: items.map((item) => ItemCard(item)).toList(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold menyediakan struktur visual dasar halaman (AppBar, Body, SnackBar).
     return Scaffold(
-      // AppBar menampilkan bar bagian atas halaman aplikasi.
-      appBar: AppBar(
-        title: const Text(
-          'MyPortfolio',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      // Body halaman utama dengan padding di sekelilingnya.
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
-              ],
-            ),
-
-            const SizedBox(height: 16.0),
-
-            // Bagian tengah: pesan sambutan dan kisi tombol menu portofolio.
-            Center(
+      appBar: AppBar(title: const Text('MyPortfolio')),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480), 
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Selamat datang di MyPortfolio Mobile!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
+                  ProfileHeader(nama: nama),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(child: InfoCard(title: 'NPM', content: npm)),
+                      const SizedBox(width: 12),
+                      Expanded(child: InfoCard(title: 'Class', content: kelas)),
+                    ],
                   ),
-
-                  // GridView menampilkan kartu tombol dalam tata letak kisi 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // shrinkWrap agar ukuran kisi menyesuaikan tinggi konten anak.
-                    shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
+                  const SizedBox(height: 22),
+                  const SectionLabel('View'),
+                  const SizedBox(height: 10),
+                  _buildGrid(viewItems, columns: 3, ratio: 1.0),
+                  const SizedBox(height: 22),
+                  const SectionLabel('Add'),
+                  const SizedBox(height: 10),
+                  _buildGrid(addItems, columns: 2, ratio: 2.0),
+                  const SizedBox(height: 22),
+                  const LogoutButton(),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
+class ProfileHeader extends StatelessWidget {
+  final String nama;
+  const ProfileHeader({super.key, required this.nama});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: AppColors.softShadow,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Hi, I am',
+                    style: TextStyle(fontSize: 15,
+                        letterSpacing: 1, color: AppColors.muted)),
+                const SizedBox(height: 10),
+                Text(nama,
+                    style: TextStyle(
+                        fontSize: 44, fontWeight: FontWeight.w700, height: 1.05)),
+                const SizedBox(height: 5),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan judul (title) dan isi (content).
   final String title;
   final String content;
-
   const InfoCard({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      // Memberikan efek bayangan kartu elevasi 2 unit.
-      elevation: 2.0,
-      child: Container(
-        // Menyesuaikan lebar kartu dengan proporsi layar (dibagi 3.5).
-        width: MediaQuery.of(context).size.width / 3.5,
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun teks title dan content secara vertikal.
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Text(content),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: AppColors.softShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title.toUpperCase(),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8, color: AppColors.muted)),
+          const SizedBox(height: 5),
+          Text(content,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+        ],
       ),
     );
   }
@@ -119,52 +155,76 @@ class InfoCard extends StatelessWidget {
 class ItemHomepage {
   final String name;
   final IconData icon;
+  final Color bgColor;
+  final Color iconColor;
 
-  ItemHomepage(this.name, this.icon);
+  const ItemHomepage({
+    required this.name,
+    required this.icon,
+    required this.bgColor,
+    required this.iconColor,
+  });
 }
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
-
   const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      // Menggunakan warna sekunder dari skema tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
-      borderRadius: BorderRadius.circular(12),
+      color: item.bgColor,
+      borderRadius: BorderRadius.circular(22),
       child: InkWell(
-        // Aksi ketika kartu ditekan oleh pengguna.
-        onTap: () {
-          // Menampilkan SnackBar dengan pesan interaktif.
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
-            );
-        },
-        child: Container(
+        borderRadius: BorderRadius.circular(22), // supaya ripple ikut membulat
+        onTap: () => showInfoSnack(context, "You have pressed a button named ${item.name}!"),
+        child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(item.icon, color: item.iconColor, size: 30),
+              const SizedBox(height: 8),
+              Text(item.name,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SectionLabel extends StatelessWidget {
+  final String text;
+  const SectionLabel(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text.toUpperCase(),
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
+            letterSpacing: 1.6, color: AppColors.sectionLabel));
+  }
+}
+
+class LogoutButton extends StatelessWidget {
+  const LogoutButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 52,
+      child: FilledButton.icon(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.sage,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+        ),
+        onPressed: () => showInfoSnack(context, "You have pressed a logout button!"),
+        icon: const Icon(Icons.logout_rounded, size: 20),
+        label: const Text('Logout'),
       ),
     );
   }
