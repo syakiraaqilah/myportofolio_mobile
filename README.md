@@ -5,7 +5,7 @@ Portofolio versi mobile
 ## Tugas 7
 1. Jelaskan apa yang dimaksud dengan widget tree pada Flutter dan bagaimana hubungan induk-anak (parent-child) bekerja antar-widget!
 
-> _Widget tree_ itu merupakan struktur hirarki yang menyusun _widget_. Hubungan parent-child di sini menggambarkan hirarki bagaimana suatu _widget_ membungkus _widget_ yang lain di mana dalam hal ini _parent_ membungkus _child_.
+> _Widget tree_ merupakan struktur hirarki yang menyusun _widget_. Hubungan parent-child di sini menggambarkan hirarki bagaimana suatu _widget_ membungkus _widget_ yang lain di mana dalam hal ini _parent_ membungkus _child_.
 
 2. Sebutkan semua widget yang kamu gunakan dalam proyek ini dan jelaskan fungsinya masing-masing!
 
@@ -21,11 +21,11 @@ Portofolio versi mobile
 - GridView: display konten dalam format grid
 - Material: pembungkus yang dapat memberi warna dan efek
 - InkWell: memberi animasi _ripple_ ketika di-tap
-- SnackBar: display yang muncul sebagai pop-up message ketika menekan tombol
+- SnackBar: display yang muncul sebagai _pop-up message_ ketika menekan tombol
 - MyHomePage: membungkus dan mengatur layout keseluruhan homepage 
 - InfoCard: Container yang membungkus informasi seperti kelas dan npm
-- ItemCard: Material yang membungkus informasi untuk tombol view dan add.
-- ProfileHeader: Container yang membungkus informasi nama dan greeting sebagai header utama
+- ItemCard: Material yang membungkus informasi untuk tombol _view_ dan _add_.
+- ProfileHeader: Container yang membungkus informasi nama dan _greeting_ sebagai header utama
 - LogoutButton: SizedBox untuk tombol logout
 
 3. Apa fungsi dari widget MaterialApp? Jelaskan mengapa widget ini umumnya digunakan sebagai root widget pada aplikasi Flutter!
@@ -42,7 +42,7 @@ Portofolio versi mobile
 
 6. Jelaskan konsep hot reload di Flutter dan apa perbedaannya dengan hot restart! Kapan kita tidak bisa hanya mengandalkan hot reload dan harus melakukan hot restart atau full restart?
 
-> Hot reload memungkinkan _developer_ melihat perubahan kode tanpa memulai ulang aplikasi. Flutter akan otomatis melakukan _compile_ setiap perubahan kode dan mengirimnya ke Dart Virtual Machine yang sedang berjalan. VM kemudian memperbarui struktur _widget tree_. Di sisi lain, pada hot restart, flutter akan memulai aplikasi dari awal dan menghapus _state_ aplikasi yang ada. Semua variabel akan diinisialisai ulang dan aplikasi kembali ke _state_ awalnya. Hot reload cenderung lebih cepat dari hot restart. Adapun hot reload lebih efektif untuk perubahan UI dan logika yang tidak memengaruhi _state_ global, sementara hot restart untuk perubahan yang memengaruhi _state_ global atau struktur aplikasi.
+> Hot reload memungkinkan _developer_ melihat perubahan kode tanpa memulai ulang aplikasi. Flutter akan otomatis melakukan _compile_ setiap perubahan kode dan mengirimnya ke Dart Virtual Machine yang sedang berjalan. VM kemudian memperbarui struktur _widget tree_. Di sisi lain, pada hot restart, flutter akan menghapus _state_ aplikasi yang ada dan memulai aplikasi dari awal. Semua variabel akan diinisialisai ulang dan aplikasi kembali ke _state_ awalnya. Hot reload cenderung lebih cepat dari hot restart. Adapun hot reload lebih efektif untuk perubahan UI dan logika yang tidak memengaruhi _state_ global, sementara hot restart untuk perubahan yang memengaruhi _state_ global atau struktur aplikasi.
 
 ### AI Disclosure
 
@@ -55,5 +55,7 @@ AI yang saya gunakan adalah Claude Sonnet 5. Berikut alur prompting yang saya te
 Selanjutnya, berikut adalah spesifikasi bantuan dari AI yang saya gunakan:
 
 1. Pembuatan desain untuk tampilan aplikasi
-2. Analisis dan refactor kode yang sudah dibuat menjadi sesuai dengan desain yang diinginkan
+2. Analisis dan _refactor_ kode yang sudah dibuat menjadi sesuai dengan desain yang diinginkan
 3. Analisis fungsi, struktur, dan penerapan elemen-elemen flutter
+
+`Log AI: https://claude.ai/share/c902729a-ea99-4fa9-ac4c-84bb1670b6c2`
