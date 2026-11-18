@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'menu.dart';
+import 'package:material_ui/material_ui.dart';
+import 'screens/menu.dart';
 import 'theme.dart';
 
 void main() => runApp(const MyApp());

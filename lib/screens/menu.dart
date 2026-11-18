@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
-import 'theme.dart';
+import 'package:material_ui/material_ui.dart';
+import '../theme.dart';
+import '../widgets/left_drawer.dart';
+import '../widgets/project_card.dart';
 
 // Helper untuk ItemCard dan logout
 void showInfoSnack(BuildContext context, String message) {
@@ -25,7 +27,7 @@ class MyHomePage extends StatelessWidget {
   ];
 
   final List<ItemHomepage> addItems = const [
-    ItemHomepage(name: "Add Projects", icon: Icons.add_circle_rounded,
+    ItemHomepage(name: "Add Project", icon: Icons.add_circle_rounded,
         bgColor: AppColors.coral, iconColor: AppColors.coralIcon),
     ItemHomepage(name: "Add Education", icon: Icons.add_circle_rounded,
         bgColor: AppColors.sky, iconColor: AppColors.skyIcon),
@@ -49,6 +51,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('MyPortfolio')),
+      drawer: const LeftDrawer(),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -164,36 +167,6 @@ class ItemHomepage {
     required this.bgColor,
     required this.iconColor,
   });
-}
-
-class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
-  const ItemCard(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: item.bgColor,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22), // supaya ripple ikut membulat
-        onTap: () => showInfoSnack(context, "You have pressed a button named ${item.name}!"),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(item.icon, color: item.iconColor, size: 30),
-              const SizedBox(height: 8),
-              Text(item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class SectionLabel extends StatelessWidget {
