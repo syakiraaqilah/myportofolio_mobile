@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import '../screens/menu.dart';
 import '../screens/project_form.dart';
+import '../screens/experience_form.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -18,6 +19,10 @@ class ItemCard extends StatelessWidget {
           if (item.name == "Add Project") {
             Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ProjectFormPage()));
+          }
+          if (item.name == "Add Experience") {
+            Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ExperienceFormPage()));
           }
         },
         child: Padding(

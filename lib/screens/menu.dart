@@ -20,7 +20,7 @@ class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> viewItems = const [
     ItemHomepage(name: "View Projects", icon: Icons.folder_rounded,
         bgColor: AppColors.mint, iconColor: AppColors.mintIcon),
-    ItemHomepage(name: "View Education", icon: Icons.school_rounded,
+    ItemHomepage(name: "View Experience", icon: Icons.school_rounded,
         bgColor: AppColors.peach, iconColor: AppColors.peachIcon),
     ItemHomepage(name: "View Skills", icon: Icons.build,
         bgColor: AppColors.lilac, iconColor: AppColors.lilacIcon),
@@ -29,7 +29,7 @@ class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> addItems = const [
     ItemHomepage(name: "Add Project", icon: Icons.add_circle_rounded,
         bgColor: AppColors.coral, iconColor: AppColors.coralIcon),
-    ItemHomepage(name: "Add Education", icon: Icons.add_circle_rounded,
+    ItemHomepage(name: "Add Experience", icon: Icons.add_circle_rounded,
         bgColor: AppColors.sky, iconColor: AppColors.skyIcon),
   ];
 
