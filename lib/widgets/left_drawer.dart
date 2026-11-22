@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import '../screens/menu.dart';
 import '../screens/project_form.dart';
 import '../screens/experience_form.dart';
+import '../theme.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -13,7 +14,7 @@ class LeftDrawer extends StatelessWidget {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.indigo,
+              color: AppColors.ink,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

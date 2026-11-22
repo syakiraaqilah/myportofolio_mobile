@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import '../widgets/left_drawer.dart';
+import '../theme.dart';
 
 class ProjectFormPage extends StatefulWidget {
   const ProjectFormPage({super.key});
@@ -32,9 +33,10 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
         title: const Center(
           child: Text(
             'Add Project Form',
+            style: TextStyle(color: Colors.white),
           ),
         ),
-        backgroundColor: Colors.indigo,
+        backgroundColor: AppColors.ink,
         foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
@@ -160,11 +162,11 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          WidgetStateProperty.all(Colors.indigo),
+                          WidgetStateProperty.all(AppColors.muted),
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {

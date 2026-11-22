@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:material_ui/material_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/left_drawer.dart';
+import '../theme.dart';
 
 class ExperienceFormPage extends StatefulWidget {
   const ExperienceFormPage({super.key});
@@ -187,9 +188,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Experience Form'),
+        title: const Text(
+          'Add Experience Form',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.indigo,
+        backgroundColor: AppColors.ink,
         foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
@@ -346,10 +350,10 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
+                      backgroundColor: WidgetStateProperty.all(AppColors.muted),
                     ),
                     onPressed: _submit,
                     child: const Text(

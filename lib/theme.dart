@@ -27,6 +27,9 @@ class AppTheme {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.sage, surface: AppColors.cream),
         scaffoldBackgroundColor: AppColors.cream,
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: AppColors.cream,
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
