@@ -63,7 +63,7 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Experience'),
-            // Navigasi ke halaman tambah proyek
+            // Navigasi ke halaman tambah experience
             onTap: () {  
                 Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const ExperienceFormPage()));   
