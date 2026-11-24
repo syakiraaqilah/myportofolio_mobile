@@ -1,4 +1,9 @@
 import 'package:material_ui/material_ui.dart';
+import '../models/project.dart';
+import '../services/api_client.dart';
+import '../services/auth_state.dart';
+import '../widgets/auth_guard.dart'; 
+import 'package:provider/provider.dart';
 import '../widgets/left_drawer.dart';
 import '../theme.dart';
 
@@ -12,19 +17,117 @@ class ProjectFormPage extends StatefulWidget {
 class _ProjectFormPageState extends State<ProjectFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _projectName = "";
-  String _description = "";
-  String _category = "Web Development"; // default
-  String _technologies = "";
-  String _projectLink = "";
+  String _title = '';
+  String _description = '';
+  String _techStack = '';
+  String _projectUrl = '';
+  String _projectImageUrl = '';
+  bool _isSubmitting = false;
 
-  final List<String> _categories = [
-    'Web Development',
-    'Mobile Development',
-    'Machine Learning',
-    'Data Science',
-    'Other',
-  ];
+  String? _validateRequired(String? value, String label) {
+    if (value == null || value.trim().isEmpty) {
+      return '$label tidak boleh kosong!';
+    }
+    return null;
+  }
+
+  String? _validateUrl(String? value, {bool required = true}) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return required ? 'URL tidak boleh kosong!' : null;
+    }
+    final uri = Uri.tryParse(text);
+    final valid = uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+    return valid ? null : 'Masukkan URL yang valid (http:// atau https://)';
+  }
+
+  InputDecoration _decoration(String label, {String? hint}) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint ?? label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+    );
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final ok = await ensureLoggedIn(context);
+    if (!ok || !mounted) return;
+
+    final auth = context.read<AuthState>();
+    final token = auth.token;
+    if (token == null) return;
+
+    setState(() => _isSubmitting = true);
+
+    final newProject = Project(
+      title: _title.trim(),
+      description: _description.trim(),
+      techStack: _techStack.trim(),
+      projectUrl: _projectUrl.trim(),
+      projectImageUrl: _projectImageUrl.trim(),
+    );
+
+    try {
+      await context.read<ApiClient>().createProject(newProject, token: token);
+      if (!mounted) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Proyek berhasil ditambahkan!'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Judul: ${newProject.title}'),
+                Text('Deskripsi: ${newProject.description}'),
+                Text('Tech Stack: ${newProject.techStack}'),
+                Text('URL Proyek: ${newProject.projectUrl}'),
+                if (newProject.projectImageUrl.isNotEmpty)
+                  Text('URL Gambar: ${newProject.projectImageUrl}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () => Navigator.pop(dialogContext),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (e.statusCode == 401) {
+        await auth.logout();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sesi habis. Silakan login kembali.'),
+          ),
+        );
+        await ensureLoggedIn(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menyimpan proyek (${e.statusCode})')),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tidak bisa terhubung ke server.')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,119 +149,71 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // === Project Name ===
+              // === Title ===
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: "Nama Proyek",
-                  labelText: "Nama Proyek",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
+                  decoration: _decoration('Title'),
+                  onChanged: (value) => _title = value,
+                  validator: (value) => _validateRequired(value, 'Title'),
                 ),
-                onChanged: (String? value) {
-                  setState(() {
-                    _projectName = value!;
-                  });
-                },
-                validator: (String? value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Nama proyek tidak boleh kosong!";
-                  }
-                  return null;
-                },
               ),
-            ),
+
               // === Description ===
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: "Deskripsi Proyek",
-                    labelText: "Deskripsi Proyek",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _description = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Deskripsi proyek tidak boleh kosong!";
-                    }
-                    return null;
-                  },
+                  decoration: _decoration('Description'),
+                  onChanged: (value) => _description = value,
+                  validator: (value) =>
+                      _validateRequired(value, 'Description'),
                 ),
               ),
 
-              // === Category ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Kategori Proyek",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  initialValue: _category,
-                  items: _categories
-                      .map((category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category),
-                          ))
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
-                ),
-              ),
-
-              // === Technologies ===
+              // === Tech Stack ===
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Contoh: Flutter, Django, Figma",
-                    labelText: "Teknologi yang Digunakan",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
+                  decoration: _decoration(
+                    'Tech Stack',
+                    hint: 'Contoh: Flutter, Django, Figma',
                   ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _technologies = value!;
-                    });
-                  },
+                  onChanged: (value) => _techStack = value,
+                  validator: (value) =>
+                      _validateRequired(value, 'Tech Stack'),
                 ),
               ),
 
-              // === Project Link ===
+              // === Project URL ===
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "URL Proyek (opsional)",
-                    labelText: "Tautan Proyek",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
+                  keyboardType: TextInputType.url,
+                  decoration: _decoration(
+                    'Project URL',
+                    hint: 'https://github.com/username/proyek',
                   ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _projectLink = value!;
-                    });
-                  },
+                  onChanged: (value) => _projectUrl = value,
+                  validator: (value) => _validateUrl(value),
                 ),
               ),
-                  // === Tombol Simpan ===
+
+              // === Project Image URL (Optional) ===
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.url,
+                  decoration: _decoration(
+                    'Project Image URL (Optional)',
+                    hint: 'https://contoh.com/gambar.png',
+                  ),
+                  onChanged: (value) => _projectImageUrl = value,
+                  validator: (value) => _validateUrl(value, required: false),
+                ),
+              ),
+
+              // === Tombol Simpan ===
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
@@ -168,49 +223,23 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                       backgroundColor:
                           WidgetStateProperty.all(AppColors.muted),
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Proyek berhasil ditambahkan!'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Nama Proyek: $_projectName'),
-                                    Text('Deskripsi: $_description'),
-                                    Text('Kategori: $_category'),
-                                    Text('Teknologi: $_technologies'),
-                                    Text('Tautan: $_projectLink'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    onPressed: _isSubmitting ? null : _submit,
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text(
+                            'Save',
+                            style: TextStyle(color: Colors.white),
+                          ),
                   ),
                 ),
               ),
             ],
           ),
-        ),    
+        ),
       ),
     );
   }
